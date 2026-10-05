@@ -169,6 +169,8 @@ shadowJar {
     configurations = [project.configurations.shadow]
     relocate 'net.covers1624.quack', 'cofh.requack'
 }
+// jar is disabled, so without this `build` produces only the sources jar.
+tasks.named('assemble') { dependsOn shadowJar }
 
 tasks.register("signShadowJar") {
     dependsOn("shadowJar")
