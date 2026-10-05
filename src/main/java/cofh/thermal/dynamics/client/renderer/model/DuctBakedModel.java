@@ -7,6 +7,7 @@ import cofh.thermal.dynamics.client.model.data.DuctModelData;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import java.util.Collections;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -56,10 +57,10 @@ public class DuctBakedModel implements IDynamicBakedModel {
     private final Map<Direction, List<BakedQuad>> fill;
     private final Map<Direction, List<BakedQuad>> connections;
     private final boolean isInventory;
-    private final Map<DuctModelData, List<BakedQuad>> modelCache = new HashMap<>();
-    private final Map<TexColorWrapper, Map<Direction, List<BakedQuad>>> centerFillCache = new Object2ObjectOpenHashMap<>();
-    private final Map<TexColorWrapper, Map<Direction, List<BakedQuad>>> fillCache = new Object2ObjectOpenHashMap<>();
-    private final Map<ResourceLocation, Map<Direction, List<BakedQuad>>> attachmentCache = new Object2ObjectOpenHashMap<>();
+    private final Map<DuctModelData, List<BakedQuad>> modelCache = Collections.synchronizedMap(new HashMap<>());
+    private final Map<TexColorWrapper, Map<Direction, List<BakedQuad>>> centerFillCache = Collections.synchronizedMap(new Object2ObjectOpenHashMap<>());
+    private final Map<TexColorWrapper, Map<Direction, List<BakedQuad>>> fillCache = Collections.synchronizedMap(new Object2ObjectOpenHashMap<>());
+    private final Map<ResourceLocation, Map<Direction, List<BakedQuad>>> attachmentCache = Collections.synchronizedMap(new Object2ObjectOpenHashMap<>());
 
     public DuctBakedModel(IGeometryBakingContext context, TextureAtlasSprite particle, EnumMap<Direction, List<BakedQuad>> centerModel, EnumMap<Direction, List<BakedQuad>> centerFill, EnumMap<Direction, List<BakedQuad>> sides, EnumMap<Direction, List<BakedQuad>> fill, EnumMap<Direction, List<BakedQuad>> connections, boolean isInventory) {
 

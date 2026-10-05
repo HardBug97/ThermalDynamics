@@ -3,6 +3,7 @@ package cofh.thermal.dynamics.common.grid.fluid;
 import cofh.lib.common.fluid.FluidStorageCoFH;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -10,6 +11,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 
 import static cofh.lib.util.constants.NBTTags.TAG_CAPACITY;
+import static cofh.lib.util.constants.NBTTags.TAG_FLUID;
 import static cofh.lib.util.constants.NBTTags.TAG_TRACK_OUT;
 
 public final class FluidGridStorage implements IFluidHandler, INBTSerializable<CompoundTag> {
@@ -118,7 +120,14 @@ public final class FluidGridStorage implements IFluidHandler, INBTSerializable<C
     // region NBT
     public FluidGridStorage read(HolderLookup.Provider registries, CompoundTag nbt) {
 
-        setFluid(FluidStorageCoFH.readFluid(registries, nbt));
+        if (nbt.contains(TAG_FLUID, Tag.TAG_COMPOUND)) {
+            setFluid(FluidStack.parseOptional(registries, nbt.getCompound(TAG_FLUID)));
+        } else if (nbt.contains("id", Tag.TAG_STRING)) {
+            // Flat layout written before the fluid moved into its own tag.
+            setFluid(FluidStorageCoFH.readFluid(registries, nbt));
+        } else {
+            setFluid(FluidStack.EMPTY);
+        }
         this.baseCapacity = nbt.getInt(TAG_CAPACITY);
 
         //        this.averageIn = nbt.getInt(TAG_TRACK_IN);
@@ -130,9 +139,10 @@ public final class FluidGridStorage implements IFluidHandler, INBTSerializable<C
 
     public CompoundTag write(HolderLookup.Provider registries, CompoundTag nbt) {
 
-        // save() throws on an empty stack.
-        if (fluid.saveOptional(registries) instanceof CompoundTag savedTag) {
-            nbt.merge(savedTag);
+        // Not merged flat: the grid's tag already uses "id" for its UUID, which FluidStack's own "id" would
+        // overwrite, so the grid could not be loaded again. save() throws on an empty stack.
+        if (!fluid.isEmpty()) {
+            nbt.put(TAG_FLUID, fluid.save(registries));
         }
         nbt.putInt(TAG_CAPACITY, baseCapacity);
 
