@@ -1,5 +1,6 @@
 package cofh.thermal.dynamics.common.grid.fluid;
 
+import cofh.lib.common.fluid.FluidStorageCoFH;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -117,7 +118,7 @@ public final class FluidGridStorage implements IFluidHandler, INBTSerializable<C
     // region NBT
     public FluidGridStorage read(HolderLookup.Provider registries, CompoundTag nbt) {
 
-        setFluid(FluidStack.parseOptional(registries, nbt));
+        setFluid(FluidStorageCoFH.readFluid(registries, nbt));
         this.baseCapacity = nbt.getInt(TAG_CAPACITY);
 
         //        this.averageIn = nbt.getInt(TAG_TRACK_IN);

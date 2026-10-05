@@ -28,7 +28,10 @@ Phase A (1.21.1) is **code-complete** on branch `1.21.1`: `./gradlew build` is c
 
 ## Inbox
 
-- **Client-side duct GUI behaviour to eyeball in `runClient`.** `DuctBlock` moved from
+- *(2026-10-05, `runClient`: ducts render and connect; empty hand on a plain duct opens nothing,
+  by design - no duct block entity is a `MenuProvider`, same as 1.20 - and an energy limiter
+  attachment's GUI opens and its buttons work. Wrench connect/disconnect not tried yet.)*
+  **Client-side duct GUI behaviour to eyeball in `runClient`.** `DuctBlock` moved from
   `use` to `useItemOn` and deliberately does *not* override `useWithoutItem` (see that
   commit's message). Worth confirming in game that: empty-hand click opens the duct /
   attachment GUI, a wrench still connects/disconnects, and right-clicking a duct while
